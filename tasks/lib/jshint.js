@@ -196,19 +196,15 @@ exports.init = function(grunt) {
       // translation to properly report the original source file and
       // clean up when finished.
       files = grunt.util._.map(files, function(file) {
-        if (path.extname(file) === '.jsx') {
-          var jsx = grunt.file.read(file);
-          try {
-            var js = React.transform(jsx);
-            var tmpfile = path.join(os.tmpdir(), 'grunt-jsxhint', file);
-            tempFiles[tmpfile] = file;
-            grunt.file.write(tmpfile, js);
-            return tmpfile;
-          } catch (err) {
-            grunt.log.warn('error converting ' + file + ': ' + err);
-            return file;
-          }
-        } else {
+        var jsx = grunt.file.read(file);
+        try {
+          var js = React.transform(jsx);
+          var tmpfile = path.join(os.tmpdir(), 'grunt-jsxhint', file);
+          tempFiles[tmpfile] = file;
+          grunt.file.write(tmpfile, js);
+          return tmpfile;
+        } catch (err) {
+          grunt.log.warn('error converting ' + file + ': ' + err);
           return file;
         }
       });
