@@ -199,7 +199,7 @@ exports.init = function(grunt) {
         var jsx = grunt.file.read(file);
         try {
           var js = React.transform(jsx);
-          var tmpfile = path.join(os.tmpdir(), 'grunt-jsxhint', file);
+          var tmpfile = path.join(os.tmpdir(), 'grunt-jsxhint-'+Math.round(Math.random()*Math.pow(10, 12)), file);
           tempFiles[tmpfile] = file;
           grunt.file.write(tmpfile, js);
           return tmpfile;
