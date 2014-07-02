@@ -129,6 +129,7 @@ exports.init = function(grunt) {
 
   // Run JSHint on the given files with the given options
   exports.lint = function(files, options, done) {
+    var tempDir = path.join(os.tmpdir(), 'grunt-jsxhint-'+Math.round(Math.random()*Math.pow(10, 12)));
     var cliOptions = {
       verbose: grunt.option('verbose'),
       extensions: '',
@@ -199,7 +200,7 @@ exports.init = function(grunt) {
         var jsx = grunt.file.read(file);
         try {
           var js = React.transform(jsx);
-          var tmpfile = path.join(os.tmpdir(), 'grunt-jsxhint-'+Math.round(Math.random()*Math.pow(10, 12))+'-'+file);
+          var tmpfile = path.join(tempDir, file);
           tempFiles[tmpfile] = file;
           grunt.file.write(tmpfile, js);
           return tmpfile;
@@ -231,14 +232,10 @@ exports.init = function(grunt) {
     };
     jshintcli.run(cliOptions);
 
-    // Yuck... need to chdir into the temp directory to avoid warnings
-    // from grunt.file.delete().
     if (Object.keys(tempFiles).length !== 0) {
       var cwd = process.cwd();
-      process.chdir(os.tmpdir());
-      grunt.util._.each(tempFiles, function(orig, temp) {
-        grunt.file.delete(temp);
-      });
+      process.chdir(path.normalize(tempDir+'/..'));
+      grunt.file.delete(tempDir);
       process.chdir(cwd);
     }
 
